@@ -1,0 +1,25 @@
+{
+	"schemaVersion": 1,
+	"id": "voicesystem",
+	"version": "1.0.0",
+	"name": "Voice System",
+	"description": "Say a word, press a keybind. A voice-activated 'System' for Minecraft.",
+	"authors": ["You"],
+	"license": "MIT",
+	"environment": "client",
+	"entrypoints": {
+		"client": ["dev.system.voicesystem.VoiceSystemClient"],
+		"modmenu": ["dev.system.voicesystem.ModMenuIntegration"],
+		"voicechat": ["dev.system.voicesystem.VoiceSystemPlugin"]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": "*",
+		"voicechat": "*"
+	}
+}

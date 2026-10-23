@@ -1,0 +1,63 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	mavenCentral()
+	// Simple Voice Chat API, compile-only. Players install the mod itself.
+	maven {
+		name = 'MaxHenkel'
+		url = 'https://maven.maxhenkel.de/repository/public'
+	}
+	// Mod Menu, used only to compile the settings entry. Players install it separately.
+	maven {
+		name = 'Modrinth'
+		url = 'https://api.modrinth.com/maven'
+		content {
+			includeGroup 'maven.modrinth'
+		}
+	}
+}
+
+dependencies {
+	// Minecraft 26.x is unobfuscated: no mappings line, plain "implementation".
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Offline speech recognition. JNA already ships with Minecraft, so skip it.
+	implementation("com.alphacephei:vosk:${project.vosk_version}") { transitive = false }
+	include("com.alphacephei:vosk:${project.vosk_version}") { transitive = false }
+
+	// Optional: the settings button only shows up if the player has Mod Menu.
+	compileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
+
+	// Optional: microphone audio from Simple Voice Chat.
+	compileOnly "de.maxhenkel.voicechat:voicechat-api:${project.voicechat_api_version}"
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": inputs.properties.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.release = 25
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
